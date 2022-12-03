@@ -46,6 +46,8 @@ var Particles = (function(window, document) {
         color: '#000000',
         minDistance: 120,
         connectParticles: false,
+        lineCap: null,
+        lineWidth: null
       };
 
       _.element = null;
@@ -392,22 +394,30 @@ var Particles = (function(window, document) {
    * @param {number} opacity
    */
   Plugin.prototype._drawEdge = function(p1, p2, opacity) {
-    var _ = this,
-        gradient = _.context.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+    const gradient = this.context.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
 
-    var color1 = this._hex2rgb(p1.color);
-    var color2 = this._hex2rgb(p2.color);
+    const color1 = this._hex2rgb(p1.color);
+    const color2 = this._hex2rgb(p2.color);
 
     gradient.addColorStop(0, 'rgba(' + color1.r + ',' + color1.g + ',' + color1.b + ',' + opacity + ')');
     gradient.addColorStop(1, 'rgba(' + color2.r + ',' + color2.g + ',' + color2.b + ',' + opacity + ')');
 
-    _.context.beginPath();
-    _.context.strokeStyle = gradient;
-    _.context.moveTo(p1.x, p1.y);
-    _.context.lineTo(p2.x, p2.y);
-    _.context.stroke();
-    _.context.fill();
-    _.context.closePath();
+    this.context.beginPath();
+
+    if (this.options.lineCap) {
+      this.context.lineCap = this.options.lineCap;
+    }
+
+    if (this.options.lineWidth) {
+      this.context.lineWidth = this.options.lineWidth;
+    }
+
+    this.context.strokeStyle = gradient;
+    this.context.moveTo(p1.x, p1.y);
+    this.context.lineTo(p2.x, p2.y);
+    this.context.stroke();
+    this.context.fill();
+    this.context.closePath();
   };
 
   /**
